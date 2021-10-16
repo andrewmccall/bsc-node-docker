@@ -18,5 +18,5 @@ CMD (nohup ./bin/geth --config ./config/config.toml --datadir ./node/ --cache 18
 
 EXPOSE 30311/udp
 EXPOSE 30311/tcp
-EXPOSE 8545/udp
-EXPOSE 8546/udp
+EXPOSE 8545/tcp
+EXPOSE 8546/tcp
