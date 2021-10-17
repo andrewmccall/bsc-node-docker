@@ -34,10 +34,10 @@ spec:
           defaultMode: 0777
       - name: data-persistent-storage
         persistentVolumeClaim:
-          claimName: data
+          claimName: bsc-node-data
       initContainers:
       - name: init-snapshot
-        image: "{{ .Values.gcsfuse_image.repository }}:{{ .Values.gcsfuse_image.tag | default .Chart.AppVersion }}"
+        image: "{{ .Values.google_cloudsdk_image.repository }}:{{ .Values.google_cloudsdk_image.tag | default .Chart.AppVersion }}"
         command: ['sh', '-c', "/init-scripts/load-snapshot.sh"]
         env:
           - name: SNAPSHOT_FILE

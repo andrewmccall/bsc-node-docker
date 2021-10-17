@@ -8,8 +8,8 @@ image:
   # Overrides the image tag whose default is the chart appVersion.
   tag: "edge"
 
-gcsfuse_image:
-  repository: ghcr.io/andrewmccall/gcsfuse
+google_cloudsdk_image:
+  repository: ghcr.io/andrewmccall/google-cloudsdk
   pullPolicy: Always
   # Overrides the image tag whose default is the chart appVersion.
   tag: "edge"
@@ -37,11 +37,7 @@ podSecurityContext:
   {}
   # fsGroup: 2000
 
-securityContext:
-  privileged: true
-  capabilities:
-    add:
-      - SYS_ADMIN
+securityContext: {}
 
 service:
   type: ClusterIP
