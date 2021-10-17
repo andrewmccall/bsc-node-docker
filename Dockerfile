@@ -16,7 +16,7 @@ COPY config/ ./config/
 
 RUN mkdir -p /opt/geth/node
 
-CMD (nohup ./bin/geth --config ./config/config.toml --datadir ./node/ --cache 18000 --rpc.allow-unprotected-txs --txlookuplimit 0 --ws --ipcdisable --metrics --metrics.addr=localhost &) && sleep 2 && tail -f ./node/bsc.log
+CMD (nohup ./bin/geth --config ./config/config.toml --datadir ./node/ --cache 18000 --rpc.allow-unprotected-txs --txlookuplimit 0 --ws --ipcdisable --metrics --metrics.addr=localhost &) && sleep 2 && tail -F ./node/bsc.log
 
 EXPOSE 30311/udp
 EXPOSE 30311/tcp

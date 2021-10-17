@@ -7,9 +7,22 @@ metadata:
 spec:
   type: {{ .Values.service.type }}
   ports:
-    - port: {{ .Values.service.port }}
-      targetPort: http
+    - port: 30311
+      targetPort: 30311
       protocol: TCP
-      name: http
+      name: node-conn
+    - port: 30311
+      targetPort: 30311
+      protocol: UDP
+      name: node-conn-udp
+    - port: 8545
+      targetPort: 8545
+      protocol: TCP
+      name: node-rcp
+    - port: 8546
+      targetPort: 8546
+      protocol: TCP
+      name: node-ws
   selector:
     {{- include "bsc-node.selectorLabels" . | nindent 4 }}
+
