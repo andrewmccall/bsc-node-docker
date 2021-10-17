@@ -27,6 +27,15 @@ spec:
       serviceAccountName: {{ include "bsc-node.serviceAccountName" . }}
       securityContext:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      initContainers:
+      - name: init-snapshot
+        image: 
+        command: ['sh', '-c', "gcsfuse {{.Values.snapshot.bucket}} /mnt/gcs; ls -al /mnt/gcs"]
+        env:
+          - name: GCS_BUCKET
+            value: {{ .Values.snapshot.gcs_bucket }}
+          - name: SNAPSHOT_FILE
+            value: {{ .Values.snapshot.file }}
       containers:
         - name: {{ .Chart.Name }}
           securityContext:

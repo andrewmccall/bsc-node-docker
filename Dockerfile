@@ -16,6 +16,8 @@ COPY config/ ./config/
 
 RUN mkdir -p /opt/geth/node
 
+RUN /opt/geth/bin/geth init --datadir /opt/geth/node /opt/geth/config/genesis.json
+
 CMD (nohup ./bin/geth --config ./config/config.toml --datadir ./node/ --cache 18000 --rpc.allow-unprotected-txs --txlookuplimit 0 --ws --ipcdisable --metrics --metrics.addr=localhost &) && sleep 2 && tail -F ./node/bsc.log
 
 EXPOSE 30311/udp
