@@ -29,7 +29,7 @@ spec:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
       initContainers:
       - name: init-snapshot
-        image: 
+        image: "{{ .Values.gcsfuse_image.repository }}:{{ .Values.gcsfuse_image.tag | default .Chart.AppVersion }}"
         command: ['sh', '-c', "gcsfuse {{.Values.snapshot.bucket}} /mnt/gcs; ls -al /mnt/gcs"]
         env:
           - name: GCS_BUCKET

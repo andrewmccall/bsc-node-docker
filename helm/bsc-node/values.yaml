@@ -4,13 +4,13 @@
 
 image:
   repository: ghcr.io/andrewmccall/bsc-node
-  pullPolicy: Allways
+  pullPolicy: Always
   # Overrides the image tag whose default is the chart appVersion.
   tag: "edge"
 
-gcsfuse-image:
+gcsfuse_image:
   repository: ghcr.io/andrewmccall/gcsfuse
-  pullPolicy: Allways
+  pullPolicy: Always
   # Overrides the image tag whose default is the chart appVersion.
   tag: "edge"
 
