@@ -38,13 +38,10 @@ podSecurityContext:
   # fsGroup: 2000
 
 securityContext:
-  {}
-  # capabilities:
-  #   drop:
-  #   - ALL
-  # readOnlyRootFilesystem: true
-  # runAsNonRoot: true
-  # runAsUser: 1000
+  privileged: true
+  capabilities:
+    add:
+      - SYS_ADMIN
 
 service:
   type: ClusterIP

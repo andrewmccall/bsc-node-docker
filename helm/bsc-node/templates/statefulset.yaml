@@ -27,36 +27,51 @@ spec:
       serviceAccountName: {{ include "bsc-node.serviceAccountName" . }}
       securityContext:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      volumes:
+      - name: init-scripts
+        configMap:
+          name: init-scripts
+          defaultMode: 0777
+      - name: data-persistent-storage
+        persistentVolumeClaim:
+          claimName: data
       initContainers:
       - name: init-snapshot
         image: "{{ .Values.gcsfuse_image.repository }}:{{ .Values.gcsfuse_image.tag | default .Chart.AppVersion }}"
-        command: ['sh', '-c', "gcsfuse {{.Values.snapshot.bucket}} /mnt/gcs; ls -al /mnt/gcs"]
+        command: ['sh', '-c', "/init-scripts/load-snapshot.sh"]
         env:
-          - name: GCS_BUCKET
-            value: {{ .Values.snapshot.gcs_bucket }}
           - name: SNAPSHOT_FILE
             value: {{ .Values.snapshot.file }}
+        volumeMounts:
+          - mountPath: /init-scripts
+            name: init-scripts
+          - name: data-persistent-storage
+            mountPath: /opt/geth/node
       containers:
-        - name: {{ .Chart.Name }}
-          securityContext:
-            {{- toYaml .Values.securityContext | nindent 12 }}
-          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
-          imagePullPolicy: {{ .Values.image.pullPolicy }}
-          ports:          
-            - name: eth
-              containerPort: 30311
-              protocol: TCP
-            - name: node-discovery
-              containerPort: 30311
-              protocol: UDP
-            - name: json-rpc
-              containerPort: 8545
-              protocol: TCP
-            - name: ws
-              containerPort: 8546
-              protocol: TCP
-            - name: metrics
-              containerPort: 6060
-              protocol: TCP
-          resources:
-            {{- toYaml .Values.resources | nindent 12 }}
+      - name: {{ .Chart.Name }}
+        securityContext:
+          {{- toYaml .Values.securityContext | nindent 12 }}
+        image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+        imagePullPolicy: {{ .Values.image.pullPolicy }}
+        ports:          
+          - name: eth
+            containerPort: 30311
+            protocol: TCP
+          - name: node-discovery
+            containerPort: 30311
+            protocol: UDP
+          - name: json-rpc
+            containerPort: 8545
+            protocol: TCP
+          - name: ws
+            containerPort: 8546
+            protocol: TCP
+          - name: metrics
+            containerPort: 6060
+            protocol: TCP
+        volumeMounts:
+          - mountPath: /init-scripts
+            name: init-scripts
+          - name: data-persistent-storage
+            mountPath: /opt/geth/node
+      
