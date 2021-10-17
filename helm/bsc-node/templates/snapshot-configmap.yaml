@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+    name: init-scripts
+data:
+    load-snapshot.sh: {{ tpl (.Files.Get "files/load-snapshot.sh") . | quote }}
+

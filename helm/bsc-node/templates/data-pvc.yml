@@ -1,0 +1,13 @@
+# ssd-claim.yaml
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: bsc-node-data
+spec:
+  storageClassName: premium-rwo
+  allowVolumeExpansion: true
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1200Gi
