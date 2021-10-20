@@ -5,9 +5,17 @@ set -e
 # Loads the snapshot from a public GCS bucket and decompresses it as part of the
 # startup process. Assumes the tar is in the same format that BSC snapshots.
 
-/opt/geth/bin/geth init --datadir /opt/geth/node /opt/geth/config/genesis.json
+# If DATA_DIRECTORY has stuff in it, then just return we don't need to do anything. 
+if [ ! -z "$(ls -A ${GETH_DATA_DIRECTORY})" ]; then
+   return 0
+fi
 
-#gsutil cp gs://crypto-bsc-snapshots/${SNAPSHOT_FILE} /opt/geth/node/
- 
-#echo "Extracting ${SNAPSHOT_FILE}"
-#tar -zxvf /opt/geth/node/{SNAPSHOT_FILE} -C ${OUTPUT_LOCATION} --strip-components=2
+# first let's get the data
+gsutil cp gs://${SNAPSHOT_BUCKET}/${SNAPSHOT_FILE} ${SNAPSHOT_TEMP_DIRECTORY}
+
+/opt/geth/bin/geth init --datadir ${GETH_DATA_DIRECTORY} ${GETH_CONFIG_DIRECTORY}/genesis.json
+
+echo "Extracting ${SNAPSHOT_FILE}"
+tar -zxvf ${SNAPSHOT_TEMP_DIRECTORY}/${SNAPSHOT_FILE} -C ${GETH_DATA_DIRECTORY} --strip-components=2
+
+echo $(find .)

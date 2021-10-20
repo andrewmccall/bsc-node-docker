@@ -35,24 +35,42 @@ spec:
       - name: data-persistent-storage
         persistentVolumeClaim:
           claimName: bsc-node-data
+      - name: temp-storage
+        persistentVolumeClaim:
+          claimName: bsc-node-temp
       initContainers:
       - name: init-snapshot
-        image: "{{ .Values.google_cloudsdk_image.repository }}:{{ .Values.google_cloudsdk_image.tag | default .Chart.AppVersion }}"
+        image: "{{ .Values.init_image.repository }}:{{ .Values.init_image.tag | default .Chart.AppVersion }}"
         command: ['sh', '-c', "/init-scripts/load-snapshot.sh"]
         env:
+          - name: GETH_CONFIG_DIRECTORY
+            value: {{ .Values.geth.data_directory }}
+          - name: GETH_DATA_DIRECTORY
+            value: {{ .Values.geth.config_directory }}
           - name: SNAPSHOT_FILE
             value: {{ .Values.snapshot.file }}
+          - name: SNAPSHOT_BUCKET
+            value: {{ .Values.snapshot.bucket }}
+          - name: SNAPSHOT_TEMP_DIRECTORY
+            value: {{ .Values.snapshot.temp_directory }}
         volumeMounts:
           - mountPath: /init-scripts
             name: init-scripts
           - name: data-persistent-storage
-            mountPath: /opt/geth/node
+            mountPath: {{ .Values.geth.data_directory }}
+          - name: temp-storage
+            mountPath: {{ .Values.temp_directory }}
       containers:
       - name: {{ .Chart.Name }}
         securityContext:
           {{- toYaml .Values.securityContext | nindent 12 }}
         image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
         imagePullPolicy: {{ .Values.image.pullPolicy }}
+        env: 
+          - name: GETH_CONFIG_DIRECTORY
+            value: {{ .Values.geth.data_directory }}
+          - name: GETH_DATA_DIRECTORY
+            value: {{ .Values.geth.config_directory }}
         ports:          
           - name: eth
             containerPort: 30311
@@ -70,8 +88,6 @@ spec:
             containerPort: 6060
             protocol: TCP
         volumeMounts:
-          - mountPath: /init-scripts
-            name: init-scripts
           - name: data-persistent-storage
-            mountPath: /opt/geth/node
+            mountPath: {{ .Values.geth.data_directory }}
       

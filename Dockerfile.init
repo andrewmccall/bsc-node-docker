@@ -1,0 +1,16 @@
+FROM ubuntu
+
+LABEL AUTHOR Andrew McCall <andrew@andrewmccall.com>
+
+RUN apt-get update \
+    && apt-get install -y curl gnupg \
+    && rm -rf /var/lib/apt/lists/* 
+
+RUN echo "deb http://packages.cloud.google.com/apt cloud-sdk main" | tee /etc/apt/sources.list.d/google-cloud-sdk.list && \
+    curl -fsSLo /usr/share/keyrings/kubernetes-archive-keyring.gpg https://packages.cloud.google.com/apt/doc/apt-key.gpg && \
+    curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add - && \
+    echo "deb [signed-by=/usr/share/keyrings/kubernetes-archive-keyring.gpg] https://apt.kubernetes.io/ kubernetes-xenial main" | tee /etc/apt/sources.list.d/kubernetes.list
+
+RUN apt-get update && \
+    apt-get install -y google-cloud-sdk kubernetes && \
+    rm -rf /var/lib/apt/lists/* 

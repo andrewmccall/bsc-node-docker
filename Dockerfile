@@ -16,10 +16,14 @@ COPY config/ ./config/
 
 RUN mkdir -p /opt/geth/node
 
-CMD ./bin/geth init --datadir ./node ./config/genesis.json && (nohup ./bin/geth --config ./config/config.toml --datadir ./node/ --cache 18000 --rpc.allow-unprotected-txs --txlookuplimit 0 --ws --ipcdisable --metrics --metrics.addr=localhost &) && sleep 2 && tail -F ./node/bsc.log
+ENV GETH_DATA_DIRECTORY="/opt/geth/node"
+ENV GETH_CONFIG_DIRECTORY="/opt/geth/config"
 
 EXPOSE 30311/udp
 EXPOSE 30311/tcp
 EXPOSE 8545/tcp
 EXPOSE 8546/tcp
 EXPOSE 6060/tcp
+
+COPY entrypoint.sh ./
+ENTRYPOINT [ "./entrypoint.sh" ]

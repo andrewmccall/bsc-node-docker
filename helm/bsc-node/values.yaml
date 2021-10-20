@@ -2,14 +2,23 @@
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
+geth:
+  data_directory: "/opt/geth/node"
+  config_directory: "/opt/geth/config"
+
+snapshot:
+  file: geth-test.tar.gz
+  bucket: crypto-bsc-snapshots
+  temp_directory: "/mnt/temp"
+
 image:
   repository: ghcr.io/andrewmccall/bsc-node
   pullPolicy: Always
   # Overrides the image tag whose default is the chart appVersion.
   tag: "edge"
 
-google_cloudsdk_image:
-  repository: ghcr.io/andrewmccall/google-cloudsdk
+init_image:
+  repository: ghcr.io/andrewmccall/bsc-node-init
   pullPolicy: Always
   # Overrides the image tag whose default is the chart appVersion.
   tag: "edge"

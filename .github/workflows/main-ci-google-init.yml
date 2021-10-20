@@ -1,12 +1,11 @@
-name: Publish Releases to Hub google-cloudsdk
+name: Main Branch CI google-cloudsdk
 
-# When its time to do a release do a full cross platform build for all supported
-# architectures and push all of them to Docker Hub.
-# Only trigger on semver shaped tags.
+# For all pushes to the main branch run the tests and push the image to the
+# GitHub registry under an edge tag so we can use it for the nightly
+# integration tests
 on:
   push:
-    tags:
-      - "v*.*.*"
+    branches: main
 
 jobs:
   docker:
@@ -16,11 +15,10 @@ jobs:
       # you need to check it out.
       - name: Checkout
         uses: actions/checkout@v2
-
       - name: Prepare
         id: prep
         run: |
-          DOCKER_IMAGE=andrewmccall/google-cloudsdk
+          DOCKER_IMAGE=ghcr.io/andrewmccall/bsc-node-init
           VERSION=edge
           if [[ $GITHUB_REF == refs/tags/* ]]; then
             VERSION=${GITHUB_REF#refs/tags/v}
@@ -34,34 +32,26 @@ jobs:
           fi
           echo ::set-output name=tags::${TAGS}
 
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v1
-        with:
-          platforms: all
-
       - name: Set up Docker Buildx
         id: buildx
         uses: docker/setup-buildx-action@v1
 
-      - name: Login to DockerHub
+      - name: Login to ghcr
         if: github.event_name != 'pull_request'
         uses: docker/login-action@v1
         with:
-          username: ${{ secrets.DOCKER_USERNAME }}
-          password: ${{ secrets.DOCKER_PASSWORD }}
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Build and push
         id: docker_build
         uses: docker/build-push-action@v2
         with:
           builder: ${{ steps.buildx.outputs.name }}
-          context: ./app
-          file: ./app/Dockerfile.google-cloudsdk
-          platforms: linux/386,linux/amd64,linux/arm/v6,linux/arm/v7,linux/arm64,linux/ppc64le,linux/s390x
+          context: .
+          file: ./Dockerfile.init
           push: ${{ github.event_name != 'pull_request' }}
           tags: ${{ steps.prep.outputs.tags }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
-
-      - name: Image digest
-        run: echo ${{ steps.docker_build.outputs.digest }}
