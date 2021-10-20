@@ -59,7 +59,7 @@ spec:
           - name: data-persistent-storage
             mountPath: {{ .Values.geth.data_directory }}
           - name: temp-storage
-            mountPath: {{ .Values.temp_directory }}
+            mountPath: {{ .Values.snapshot.temp_directory }}
       containers:
       - name: {{ .Chart.Name }}
         securityContext:

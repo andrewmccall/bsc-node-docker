@@ -23,10 +23,6 @@ init_image:
   # Overrides the image tag whose default is the chart appVersion.
   tag: "edge"
 
-snapshot:
-  gcs_bucket: crypto-bsc-snapshots
-  file: test.tar.gz
-
 imagePullSecrets: []
 nameOverride: ""
 fullnameOverride: ""

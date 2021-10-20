@@ -1,4 +1,4 @@
-FROM ubuntu
+FROM ubuntu 
 
 LABEL AUTHOR Andrew McCall <andrew@andrewmccall.com>
 
