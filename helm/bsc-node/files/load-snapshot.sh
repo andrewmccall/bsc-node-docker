@@ -9,6 +9,7 @@ echo "Runing init checks and config for BSC node."
 # If DATA_DIRECTORY has stuff in it, then just return we don't need to do anything. 
 if [ ! -z "$(ls -A ${GETH_DATA_DIRECTORY})" ]; then
    echo "Data [${GETH_DATA_DIRECTORY}] is not empty, nothing to do"
+   sleep 1000
    return 0
 fi
 

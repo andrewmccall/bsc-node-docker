@@ -12,7 +12,7 @@ fi
 echo "Starting geth..."
 GETH_COMMAND="/opt/geth/bin/geth --config ${GETH_CONFIG_DIRECTORY}/config.toml --datadir ${GETH_DATA_DIRECTORY}/ --cache 18000 --rpc.allow-unprotected-txs --txlookuplimit 0 --ws --ipcdisable --metrics --metrics.addr=0.0.0.0 --verbosity 4"
 
-nohup $GETH_COMMAND &
+$GETH_COMMAND &
 
 echo "Geth started."
 # Wait a couple of seconds for the bsc.log to show up.
