@@ -44,9 +44,9 @@ spec:
         command: ['sh', '-c', "/init-scripts/load-snapshot.sh"]
         env:
           - name: GETH_CONFIG_DIRECTORY
-            value: {{ .Values.geth.data_directory }}
-          - name: GETH_DATA_DIRECTORY
             value: {{ .Values.geth.config_directory }}
+          - name: GETH_DATA_DIRECTORY
+            value: {{ .Values.geth.data_directory }}
           - name: SNAPSHOT_FILE
             value: {{ .Values.snapshot.file }}
           - name: SNAPSHOT_BUCKET
@@ -68,9 +68,9 @@ spec:
         imagePullPolicy: {{ .Values.image.pullPolicy }}
         env: 
           - name: GETH_CONFIG_DIRECTORY
-            value: {{ .Values.geth.data_directory }}
+            value: {{ .Values.geth.confiig_directory }}
           - name: GETH_DATA_DIRECTORY
-            value: {{ .Values.geth.config_directory }}
+            value: {{ .Values.geth.data_directory }}
         ports:          
           - name: eth
             containerPort: 30311
