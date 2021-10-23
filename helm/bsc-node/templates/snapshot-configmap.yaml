@@ -4,4 +4,7 @@ metadata:
     name: init-scripts
 data:
     load-snapshot.sh: {{ tpl (.Files.Get "files/load-snapshot.sh") . | quote }}
+    init-node.sh: {{ tpl (.Files.Get "files/init-node.sh") . | quote }}
+    job.yml: {{ tpl (.Files.Get "files/job.yml") . | quote }}
+    temp-pcv.yml: {{ tpl (.Files.Get "files/job.yml") . | quote }}
 

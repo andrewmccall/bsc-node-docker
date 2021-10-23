@@ -1,17 +1,8 @@
 #!/bin/sh
 
-set -e
-echo "Runing init checks and config for BSC node."
-
-# Loads the snapshot from a public GCS bucket and decompresses it as part of the
-# startup process. Assumes the tar is in the same format that BSC snapshots.
-
-# If DATA_DIRECTORY has stuff in it, then just return we don't need to do anything. 
-if [ ! -z "$(ls -A ${GETH_DATA_DIRECTORY})" ]; then
-   echo "Data [${GETH_DATA_DIRECTORY}] is not empty, nothing to do"
-   sleep 1000
-   return 0
-fi
+# This script will download and install the snapshot. It creates
+# a PVC and a Job to perform the download. This allows us to resume 
+# the download if the job fails but removed the PVC once we're done. 
 
 echo "Copying snapshot gs://${SNAPSHOT_BUCKET}/${SNAPSHOT_FILE} to ${SNAPSHOT_TEMP_DIRECTORY}"
 # first let's get the data
@@ -22,5 +13,3 @@ echo "Init the data dir ${GETH_DATA_DIRECTORY}"
 
 echo "Extracting ${SNAPSHOT_FILE}"
 tar -zxvf ${SNAPSHOT_TEMP_DIRECTORY}/${SNAPSHOT_FILE} -C ${GETH_DATA_DIRECTORY} --strip-components=2
-
-echo $(find .)

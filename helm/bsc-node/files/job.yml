@@ -1,16 +1,10 @@
 apiVersion: apps/v1
-kind: StatefulSet
+kind: Job
 metadata:
   name: bsc-node-0
   labels:
     bsc-node-type: bsc-node
-    {{- include "bsc-node.labels" . | nindent 4 }}
 spec:
-  replicas: 1
-  serviceName: bsc-node-0
-  selector:
-    matchLabels:
-      {{- include "bsc-node.selectorLabels" . | nindent 6 }}
   template:
     metadata:
       {{- with .Values.podAnnotations }}
@@ -35,10 +29,13 @@ spec:
       - name: data-persistent-storage
         persistentVolumeClaim:
           claimName: bsc-node-data
-      initContainers:
+      - name: temp-storage
+        persistentVolumeClaim:
+          claimName: bsc-node-temp
+      containers:
       - name: init-snapshot
         image: "{{ .Values.init_image.repository }}:{{ .Values.init_image.tag | default .Chart.AppVersion }}"
-        command: ['sh', '-c', "sleep 1000"]
+        command: ['sh', '-c', "/init-scripts/load-snapshot.sh"]
         env:
           - name: GETH_CONFIG_DIRECTORY
             value: {{ .Values.geth.config_directory }}
@@ -55,34 +52,5 @@ spec:
             name: init-scripts
           - name: data-persistent-storage
             mountPath: {{ .Values.geth.data_directory }}
-      containers:
-      - name: {{ .Chart.Name }}
-        securityContext:
-          {{- toYaml .Values.securityContext | nindent 12 }}
-        image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
-        imagePullPolicy: {{ .Values.image.pullPolicy }}
-        env: 
-          - name: GETH_CONFIG_DIRECTORY
-            value: {{ .Values.geth.config_directory }}
-          - name: GETH_DATA_DIRECTORY
-            value: {{ .Values.geth.data_directory }}
-        ports:          
-          - name: eth
-            containerPort: 30311
-            protocol: TCP
-          - name: node-discovery
-            containerPort: 30311
-            protocol: UDP
-          - name: json-rpc
-            containerPort: 8545
-            protocol: TCP
-          - name: ws
-            containerPort: 8546
-            protocol: TCP
-          - name: metrics
-            containerPort: 6060
-            protocol: TCP
-        volumeMounts:
-          - name: data-persistent-storage
-            mountPath: {{ .Values.geth.data_directory }}
-      
+          - name: temp-storage
+            mountPath: {{ .Values.snapshot.temp_directory }}

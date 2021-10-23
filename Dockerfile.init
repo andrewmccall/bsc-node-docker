@@ -29,5 +29,5 @@ RUN echo "deb http://packages.cloud.google.com/apt cloud-sdk main" | tee /etc/ap
     echo "deb [signed-by=/usr/share/keyrings/kubernetes-archive-keyring.gpg] https://apt.kubernetes.io/ kubernetes-xenial main" | tee /etc/apt/sources.list.d/kubernetes.list
 
 RUN apt-get update && \
-    apt-get install -y google-cloud-sdk kubernetes && \
+    apt-get install -y google-cloud-sdk kubectl && \
     rm -rf /var/lib/apt/lists/* 
